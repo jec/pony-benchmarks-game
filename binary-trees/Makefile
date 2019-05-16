@@ -1,4 +1,4 @@
 default: binary-trees
 
-binary-trees: main.pony runner.pony node.pony
-	ponyc -d
+binary-trees: main.pony builder.pony node.pony
+	ponyc
