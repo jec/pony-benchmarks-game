@@ -11,5 +11,4 @@ actor Main
         timers(consume timer)
     | None =>
         env.err.print("First argument was not an integer.")
-        // env.exitcode = 1
     end
