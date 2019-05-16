@@ -12,15 +12,15 @@ actor Main
     match try env.args(1)?.usize()? else None end
     | let depth: USize =>
         let max_depth: USize = if (min_depth + 2) > depth then min_depth + 2 else depth end
-        build_stretch_tree(max_depth + 1)
+        build_stretch_tree(max_depth)
     | None =>
         env.err.print("First argument was not an integer.")
     end
 
   be build_stretch_tree(depth: USize) =>
-    let tree = Node.create(depth)
-    _env.out.print("stretch tree of depth " + depth.string() + "\t check: " + tree.count().string())
-    build_long_lived_tree(depth - 1)
+    let tree = Node.create(depth + 1)
+    _env.out.print("stretch tree of depth " + (depth + 1).string() + "\t check: " + tree.count().string())
+    build_long_lived_tree(depth)
 
   be build_long_lived_tree(depth: USize) =>
     _long_lived_tree = (Node.create(depth), depth)
