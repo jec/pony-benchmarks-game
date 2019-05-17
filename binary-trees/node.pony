@@ -1,7 +1,7 @@
 class Node
-  let children: ((Node, Node) | None)
+  let children: ((Node val, Node val) | None)
 
-  new create(depth: USize) =>
+  new val create(depth: USize) =>
     if depth > 0 then
       children = (Node.create(depth - 1), Node.create(depth - 1))
     else
@@ -11,5 +11,5 @@ class Node
   fun count(): USize =>
     match children
     | None => 1
-    | (let left: Node box, let right: Node box) => 1 + left.count() + right.count()
+    | (let left: Node val, let right: Node val) => 1 + left.count() + right.count()
     end
