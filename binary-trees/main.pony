@@ -7,6 +7,7 @@ actor Main
   let env: Env
 
   var _long_lived_tree: (Node val | None) = None
+  let _queue: Array[USize] = Array[USize]
   let _pending: Set[USize] = Set[USize]
 
   new create(env': Env) =>
@@ -16,43 +17,55 @@ actor Main
     | let depth: USize =>
         max_depth = if (min_depth + 2) > depth then min_depth + 2 else depth end
         // build stretch tree
-        Builder(1, max_depth + 1, this, env)
+        Builder(1, max_depth + 1, this)
     | None =>
         env.err.print("First argument was not an integer.")
     end
 
-  be builder_done(trees: Array[Node val] val, iterations: USize, depth: USize, size: USize, builder: Builder) =>
+  be builder_done(tree: (Node val | None), iterations: USize, depth: USize, size: USize) =>
     match state
     | Init =>
         state = StretchDone
-        match try trees(0) else None end
+        match tree
         | None => None
-        | let tree: Node val =>
-            env.out.print("stretch tree of depth " + size.string() + "\t check: " + tree.count().string())
+        | let t: Node val =>
+            env.out.print("stretch tree of depth " + size.string() + "\t check: " + t.count().string())
         end
 
         // build long-lived tree
-        Builder(1, max_depth, this, env)
+        Builder(1, max_depth, this)
     | StretchDone =>
         state = LongLivedDone
-        _long_lived_tree = try trees(0) else None end
+        _long_lived_tree = tree
 
-        // build trees
+        // create queue of depths to run
         for d in Range(min_depth, max_depth + 1, 2) do
-          _pending.set(d)
-          Builder(1 << ((max_depth - d) + min_depth), d, this, env)
+          _queue.push(d)
         end
+
+        // run first depth
+        start_next_builder()
     | LongLivedDone =>
+        env.out.print(iterations.string() + "\t trees of depth " + depth.string() + "\t check: " + size.string())
+
         // remove from pending
         _pending.unset(depth)
-        env.out.print(iterations.string() + "\t trees of depth " + depth.string() + "\t check: " + size.string())
 
         // check if all depths are done
         if _pending.size() == 0 then
           match _long_lived_tree
-          | let tree: Node val =>
-              env.out.print("long lived tree of depth " + max_depth.string() + "\t check: " + tree.count().string())
           | None => None
+          | let t: Node val =>
+              env.out.print("long lived tree of depth " + max_depth.string() + "\t check: " + t.count().string())
           end
         end
+    end
+
+  be start_next_builder() =>
+    match try _queue.shift()? else None end
+    | None => None
+    | let d: USize =>
+        _pending.set(d)
+        Builder(1 << ((max_depth - d) + min_depth), d, this)
+        start_next_builder()
     end
