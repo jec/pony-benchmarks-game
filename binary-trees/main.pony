@@ -6,7 +6,7 @@ actor Main
   var state: State = Init
   let env: Env
 
-  var _long_lived_tree: (Node val | None) = None
+  var _long_lived_tree: (Tree val | None) = None
   let _queue: Array[USize] = Array[USize]
   let _pending: Set[USize] = Set[USize]
 
@@ -22,13 +22,13 @@ actor Main
         env.err.print("First argument was not an integer.")
     end
 
-  be builder_done(tree: (Node val | None), iterations: USize, depth: USize, size: USize) =>
+  be builder_done(tree: (Tree val | None), iterations: USize, depth: USize, size: USize) =>
     match state
     | Init =>
         state = StretchDone
         match tree
         | None => None
-        | let t: Node val =>
+        | let t: Tree val =>
             env.out.print("stretch tree of depth " + size.string() + "\t check: " + t.count().string())
         end
 
@@ -55,7 +55,7 @@ actor Main
         if _pending.size() == 0 then
           match _long_lived_tree
           | None => None
-          | let t: Node val =>
+          | let t: Tree val =>
               env.out.print("long lived tree of depth " + max_depth.string() + "\t check: " + t.count().string())
           end
         end

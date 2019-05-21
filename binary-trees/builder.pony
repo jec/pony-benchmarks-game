@@ -14,7 +14,7 @@ actor Builder
     build_tree()
 
   be build_tree() =>
-    let tree: Node val = Node.create(depth)
+    let tree: Tree val = Tree.create(depth)
     _count = _count + 1
     _sum = _sum + tree.count()
 
