@@ -2,11 +2,12 @@ class Tree
   let children: ((Tree val, Tree val) | None)
 
   new val create(depth: USize) =>
-    if depth > 0 then
-      children = (Tree.create(depth - 1), Tree.create(depth - 1))
-    else
-      children = None
-    end
+    children =
+      if depth == 0 then
+        None
+      else
+        (Tree.create(depth - 1), Tree.create(depth - 1))
+      end
 
   fun count(): USize =>
     match children
