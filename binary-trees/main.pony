@@ -29,7 +29,7 @@ actor Main
         match tree
         | None => None
         | let t: Tree val =>
-            env.out.print("stretch tree of depth " + size.string() + "\t check: " + t.count().string())
+            env.out.print("stretch tree of depth " + depth.string() + "\t check: " + t.count().string())
         end
 
         // build long-lived tree
